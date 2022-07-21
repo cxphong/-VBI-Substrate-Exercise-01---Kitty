@@ -272,8 +272,16 @@ impl pallet_sudo::Config for Runtime {
 // 	type Event = Event;
 // }
 
+parameter_types! {
+    pub const KittyLimit: u32 = 5;
+}
+
 impl pallet_kitty::Config for Runtime {
 	type Event = Event;
+	type Timestamp = pallet_timestamp::Pallet<Runtime>;
+	type MyRandomness = RandomCollectiveFlip;
+	// type KittyLimit: u32;
+	type KittyLimit = KittyLimit;
 }
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
@@ -283,7 +291,7 @@ construct_runtime!(
 		UncheckedExtrinsic = UncheckedExtrinsic
 	{
 		System: frame_system,
-		RandomnessCollectiveFlip: pallet_randomness_collective_flip,
+		RandomCollectiveFlip: pallet_randomness_collective_flip,
 		Timestamp: pallet_timestamp,
 		Aura: pallet_aura,
 		Grandpa: pallet_grandpa,
