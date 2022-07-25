@@ -5,11 +5,11 @@
 /// <https://docs.substrate.io/v3/runtime/frame>
 pub use pallet::*;
 
-// #[cfg(test)]
-// mod mock;
+#[cfg(test)]
+mod mock;
 
-// #[cfg(test)]
-// mod tests;
+#[cfg(test)]
+mod tests;
 
 // #[cfg(feature = "runtime-benchmarks")]
 // mod benchmarking;
@@ -85,6 +85,7 @@ pub mod pallet {
 	pub enum Error<T> {
 		/// Error names should be descriptive.
 		TooYoung,
+		InvalidNameLength,
 		/// Errors should have helpful documentation associated with them.
 		StorageOverflow,
 	}
@@ -96,6 +97,7 @@ pub mod pallet {
 	//extrinsic
 	#[pallet::call]
 	impl<T:Config> Pallet<T> {
+
 		/// An example dispatchable that takes a singles value as a parameter, writes the value to
 		/// storage and emits an event. This function must be dispatched by a signed extrinsic.
 		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
@@ -105,6 +107,7 @@ pub mod pallet {
 			// https://docs.substrate.io/v3/runtime/origins
 			let who = ensure_signed(origin)?;
 			ensure!(age>20, Error::<T>::TooYoung);
+			ensure!(name.len() >= 8 && name.len() <= 128, Error::<T>::InvalidNameLength);
 			let gender = Self::gen_gender(name.clone())?;
 			let student = Students {
 				name: name.clone(),
